@@ -30,10 +30,10 @@ void add_circle( struct matrix * points,
     t = 2*M_PI*i;
     x = r*sin(t)+cx;
     y = r*cos(t)+cy;
+    add_edge(points,x0,y0,0,x,y,0);
+    x0 = x;
+    y0 = y;
   }
-  add_edge(points,x0,y0,0,x,y,0);
-  x0 = x;
-  y0 = y;
 }
 
 /*======== void add_curve() ==========
@@ -63,10 +63,27 @@ void add_curve( struct matrix *points,
 		double x2, double y2, 
 		double x3, double y3, 
 		double step, int type ) {
+  struct matrix *xcfs, *ycfs;
+  double x,y,xs,ys;
+  xs = x0;
+  ys = y0;
   if(type==0){ //hermy
-    
+    double s1 = (y1-y0)/(x1-x0);
+    double s2 = (y3-y2)/(x3-x2);
+    xcfs = generate_curve_coefs(x0,x3,s1,s2);
+    ycfs = generate_curve_coefs(y0,y3,s1,s2);
   } else { //bezzy
+    xcfs = generate_curve_coefs(x0,x1,x2,x3);
+    ycfs = generate_curve_coefs(y0,y1,y2,y3);
   }
+  for(i=step;i<1;i+=step){
+      x = ((xcfs->m[0][0]*i+xcfs->m[1][0])*i+xcfs->m[2][0])*i+xcfs->m[3][0];
+      y = ((ycfs->m[0][0]*i+ycfs->m[1][0])*i+ycfs->m[2][0])*i+ycfs->m[3][0];
+      add_edge(points,xs,ys,0,x,y,0);
+      xs = x;
+      ys = y;
+    }
+    add_edge(points,xs,ys,0,x3,y3,0);
 }
 
 /*======== void add_point() ==========

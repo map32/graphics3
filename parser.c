@@ -71,6 +71,8 @@ void parse_file ( char * filename,
 
   FILE *f;
   char line[256];
+  double args[8];
+  int type = -1;
   
   clear_screen(s);
 
@@ -81,8 +83,77 @@ void parse_file ( char * filename,
   
   while ( fgets(line, 255, f) != NULL ) {
     line[strlen(line)-1]='\0';
-    printf(":%s:\n",line);  
+    printf(":%s:\n",line);
+    if (strcmp(line, "line")==0){
+      type = 0;
+    } else if (strcmp(line, "circle")==0){
+      type = 1;
+    } else if (strcmp(line, "hermite")==0){
+      type = 2;
+    } else if (strcmp(line, "bezier")==0){
+      type = 3;
+    } else if (strcmp(line, "ident")==0){
+      ident(transform);
+    } else if (strcmp(line, "scale")==0){
+      type = 4;
+    } else if (strcmp(line, "translate")==0){
+      type = 5;
+    } else if (strcmp(line, "xrotate")==0){
+      type = 6;
+    } else if (strcmp(line, "yrotate")==0){
+      type = 7;
+    } else if (strcmp(line, "zrotate")==0){
+      type = 8;
+    } else if (strcmp(line, "apply")==0){
+      matrix_mult(transform,pm);
+    } else if (strcmp(line, "display")==0){
+      display(s);
+    } else if (strcmp(line, "save")==0){
+      save_extension(s,line);
+    } else if (strcmp(line, "quit")==0){
+      return;
+    } else {
+      readargs(line,args);
+      switch (type):
+      case 0:
+	add_edge(pm,args[0],args[1],args[2],args[3],args[4],args[5]);
+	break;
+      case 1:
+	add_circle(pm,args[0],args[1],args[2],0.05);
+        break;
+      case 2:
+	add_curve(pm,args[0],args[1],args[2],args[3],args[4],args[5],args[6],args[7],0.05,0);
+        break;
+      case 3:
+	add_curve(pm,args[0],args[1],args[2],args[3],args[4],args[5],args[6],args[7],0.05,1);
+        break;
+      case 4:
+	matrix_mult(make_scale(args[0],args[1],args[2]),transform);
+        break;
+      case 5:
+	matrix_mult(make_translate(args[0],args[1],args[2]),transform);
+        break;
+      case 6:
+	matrix_mult(make_rotX(args[0]/180.*M_PI),transform);
+        break;
+      case 7:
+	matrix_mult(make_rotY(args[0]/180.*M_PI),transform);
+        break;
+      case 8:
+	matrix_mult(make_rotZ(args[0]/180.*M_PI),transform);
+        break;
+      default:
+	return;
+    }
+    type = -1;
   }
 }
 
-  
+void readargs(char *args, double *list){
+  char *t = strtok(args, " ");
+  while(t!=NULL){
+    *list = (double)(strtol(t));
+    t = strtok(NULL," ");
+    list++;
+  }
+}
