@@ -9,6 +9,16 @@
 #include "matrix.h"
 #include "parser.h"
 
+void readargs(char *args, double *list){
+  char *t = strtok(args, " ");
+  char **whatever;
+  while(t!=NULL){
+    *list = strtod(t,whatever);
+    //printf("%lf:d \n",*list);
+    t = strtok(NULL," ");
+    list++;
+  }
+}
 
 /*======== void parse_file () ==========
 Inputs:   char * filename 
@@ -73,6 +83,10 @@ void parse_file ( char * filename,
   char line[256];
   double args[8];
   int type = -1;
+  color c;
+  c.red = 255;
+  c.blue=0;
+  c.green=0;
   
   clear_screen(s);
 
@@ -83,7 +97,7 @@ void parse_file ( char * filename,
   
   while ( fgets(line, 255, f) != NULL ) {
     line[strlen(line)-1]='\0';
-    printf(":%s:\n",line);
+    //printf(":%s:%d\n",line,type);
     if (strcmp(line, "line")==0){
       type = 0;
     } else if (strcmp(line, "circle")==0){
@@ -107,25 +121,28 @@ void parse_file ( char * filename,
     } else if (strcmp(line, "apply")==0){
       matrix_mult(transform,pm);
     } else if (strcmp(line, "display")==0){
+      //printf("fdssdfsf");
+      draw_lines(pm,s,c);
       display(s);
     } else if (strcmp(line, "save")==0){
-      save_extension(s,line);
+      type = 9;
     } else if (strcmp(line, "quit")==0){
+      fclose(f);
       return;
     } else {
       readargs(line,args);
-      switch (type):
+      switch (type){
       case 0:
 	add_edge(pm,args[0],args[1],args[2],args[3],args[4],args[5]);
 	break;
       case 1:
-	add_circle(pm,args[0],args[1],args[2],0.05);
+	add_circle(pm,args[0],args[1],args[2],0.01);
         break;
       case 2:
-	add_curve(pm,args[0],args[1],args[2],args[3],args[4],args[5],args[6],args[7],0.05,0);
+	add_curve(pm,args[0],args[1],args[2],args[3],args[4],args[5],args[6],args[7],0.01,0);
         break;
       case 3:
-	add_curve(pm,args[0],args[1],args[2],args[3],args[4],args[5],args[6],args[7],0.05,1);
+	add_curve(pm,args[0],args[1],args[2],args[3],args[4],args[5],args[6],args[7],0.01,1);
         break;
       case 4:
 	matrix_mult(make_scale(args[0],args[1],args[2]),transform);
@@ -142,18 +159,17 @@ void parse_file ( char * filename,
       case 8:
 	matrix_mult(make_rotZ(args[0]/180.*M_PI),transform);
         break;
+      case 9:
+	//printf("dfg");
+	printf("r:%d,c:%d",pm->rows,pm->cols);
+	draw_lines(pm,s,c);
+	printf("%s\n",line);
+	save_extension(s,"pic.png");
+	break;
       default:
 	return;
+      }
+      type = -1;
     }
-    type = -1;
-  }
-}
-
-void readargs(char *args, double *list){
-  char *t = strtok(args, " ");
-  while(t!=NULL){
-    *list = (double)(strtol(t));
-    t = strtok(NULL," ");
-    list++;
   }
 }
