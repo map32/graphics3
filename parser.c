@@ -127,8 +127,7 @@ void parse_file ( char * filename,
     } else if (strcmp(line, "save")==0){
       type = 9;
     } else if (strcmp(line, "quit")==0){
-      fclose(f);
-      return;
+      break;
     } else {
       readargs(line,args);
       switch (type){
@@ -161,10 +160,8 @@ void parse_file ( char * filename,
         break;
       case 9:
 	//printf("dfg");
-	printf("r:%d,c:%d",pm->rows,pm->cols);
 	draw_lines(pm,s,c);
-	printf("%s\n",line);
-	save_extension(s,"pic.png");
+	save_extension(s,line);
 	break;
       default:
 	return;
@@ -172,4 +169,5 @@ void parse_file ( char * filename,
       type = -1;
     }
   }
+  fclose(f);
 }

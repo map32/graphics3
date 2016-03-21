@@ -35,10 +35,8 @@ void add_circle( struct matrix * points,
     add_edge(points,x0,y0,0,x,y,0);
     x0 = x;
     y0 = y;
-    printf("%lf:",i);
   }
   add_edge(points,x0,y0,0,cx,r+cy,0);
-  printf("\n");
 }
 
 /*======== void add_curve() ==========
@@ -77,16 +75,16 @@ void add_curve( struct matrix *points,
     double s2 = (y2-y3)/(x2-x3);
     if(x1==x0){
       if(y1>y0){
-	s1 = 1000;
+	s1 = 150;
       } else {
-	s1 = -1000;
+	s1 = -150;
       }
     }
     if(x3==x2){
       if(y3>y2){
-	s2 = 1000;
+	s2 = 150;
       } else {
-	s2 = -1000;
+	s2 = -150;
       }
     }
     //printf("%lf %lf %lf %lf %lf %lf %lf %lf all of thse\n",y1,y0,x1,x0,y3,y2,x3,x2);
@@ -165,12 +163,6 @@ void draw_lines( struct matrix * points, screen s, color c) {
   }
 
   for ( i = 0; i < points->lastcol - 1; i+=2 ) {
-
-    if (1<0){
-      printf("%lf %lf %lf %lf\n",points->m[0][i], points->m[1][i], 
-	     points->m[0][i+1], points->m[1][i+1]);
-    }
-
     draw_line( points->m[0][i], points->m[1][i], 
 	       points->m[0][i+1], points->m[1][i+1], s, c);
   } 	       

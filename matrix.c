@@ -349,7 +349,7 @@ struct matrix * generate_curve_coefs( double p1, double p2,
   } else { //bezzy
     matrix_mult(make_bezier(),pointsayshi);
   }
-  print_matrix(pointsayshi);
+  //print_matrix(pointsayshi);
   return pointsayshi;
 }
 
